@@ -20,8 +20,15 @@ export async function POST(req: Request) {
   const svix_timestamp = headerPayload.get('svix-timestamp')
   const svix_signature = headerPayload.get('svix-signature')
 
+  console.log('📋 Headers reçus:', {
+    svix_id: svix_id ? 'présent' : 'manquant',
+    svix_timestamp: svix_timestamp ? 'présent' : 'manquant',
+    svix_signature: svix_signature ? 'présent' : 'manquant'
+  })
+
   // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
+    console.error('❌ Headers svix manquants')
     return new Response('Error occured -- no svix headers', {
       status: 400,
     })
@@ -29,6 +36,7 @@ export async function POST(req: Request) {
 
   // Get the body
   const payload = await req.text()
+  console.log('📦 Payload reçu, longueur:', payload.length)
 
   // Create a new Svix instance with your secret.
   const wh = new Webhook(WEBHOOK_SECRET)
@@ -42,11 +50,24 @@ export async function POST(req: Request) {
       'svix-timestamp': svix_timestamp,
       'svix-signature': svix_signature,
     }) as WebhookEvent
+    
+    console.log('✅ Webhook vérifié avec succès')
   } catch (err) {
-    console.error('Error verifying webhook:', err)
-    return new Response('Error occured', {
-      status: 400,
-    })
+    console.error('❌ Error verifying webhook:', err)
+    
+    // En mode développement, on peut essayer de parser quand même
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔧 Mode développement: tentative de parsing sans vérification')
+      try {
+        evt = JSON.parse(payload) as WebhookEvent
+        console.log('✅ Payload parsé en mode développement')
+      } catch (parseErr) {
+        console.error('❌ Impossible de parser le payload:', parseErr)
+        return new Response('Error parsing payload', { status: 400 })
+      }
+    } else {
+      return new Response('Error verifying webhook signature', { status: 400 })
+    }
   }
 
   // Handle the webhook
@@ -59,17 +80,16 @@ export async function POST(req: Request) {
       clerkId: id,
       email: email_addresses[0]?.email_address,
       name: `${first_name} ${last_name}`
-    })
-
-    // Create user in database
-    try {
-      const newUser = await prisma.user.create({
-        data: {
-          clerkUserId: id,
-          email: email_addresses[0]?.email_address || '',
-          name: `${first_name || ''} ${last_name || ''}`.trim() || 'Utilisateur',
-        },
-      })
+    })      // Create user in database
+      try {
+        const newUser = await prisma.user.create({
+          data: {
+            clerkUserId: id,
+            email: email_addresses[0]?.email_address || '',
+            name: `${first_name || ''} ${last_name || ''}`.trim() || 'Utilisateur',
+            role: 'CLIENT', // Rôle par défaut
+          },
+        })
       
       console.log('✅ UTILISATEUR CRÉÉ EN BASE:', {
         dbId: newUser.id,

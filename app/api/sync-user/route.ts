@@ -38,6 +38,7 @@ export async function POST() {
         clerkUserId: user.id,
         email: user.emailAddresses[0]?.emailAddress || '',
         name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Utilisateur',
+        role: 'CLIENT', // Rôle par défaut
       },
     })
 

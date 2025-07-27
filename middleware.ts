@@ -4,34 +4,28 @@ import { NextRequest } from 'next/server';
 // Définir les routes qui nécessitent une authentification
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
-  '/admin(.*)',
+  '/admin/roles(.*)',
   '/api/users(.*)',
-  '/api/products(.*)'
+  '/api/products(.*)',
+  '/api/admin/roles(.*)',
+  '/api/sync-user(.*)',
+  '/api/user/role(.*)'
+]);
+
+// Définir les routes publiques dans admin (pas de protection)
+const isPublicAdminRoute = createRouteMatcher([
+  '/admin/promote-first'
 ]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
-  // Protéger les routes définies ci-dessus
+  // Permettre l'accès aux routes publiques admin sans authentification
+  if (isPublicAdminRoute(req)) {
+    return; // Laisser passer sans protection
+  }
+  
+  // Protéger les autres routes définies ci-dessus
   if (isProtectedRoute(req)) {
-    const { userId } = await auth.protect();
-    
-    // Si l'utilisateur est connecté et que ce n'est pas une API route, synchroniser
-    if (userId && !req.nextUrl.pathname.startsWith('/api/')) {
-      try {
-        // Faire un appel à notre API de synchronisation
-        const baseUrl = req.nextUrl.origin;
-        await fetch(`${baseUrl}/api/sync-user`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${userId}`
-          },
-          body: JSON.stringify({ userId })
-        });
-      } catch (error) {
-        console.log('Sync error (non-blocking):', error);
-        // Ne pas bloquer la navigation même si la sync échoue
-      }
-    }
+    await auth.protect();
   }
 });
 

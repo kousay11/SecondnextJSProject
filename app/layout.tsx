@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
 import "./globals.css";
 import Navbar from "./Navbar";
-import { AutoSyncUser } from "./components/AutoSyncUser";// autosyncronisation des utilisateurs
+import UserSyncProvider from "./components/UserSyncProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +31,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <AutoSyncUser />
+          <UserSyncProvider />
           <Navbar />
           <main className="p-5">
               {children}

@@ -3,123 +3,177 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center">
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
-              Team Office
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-green-50">
+      {/* Hero Section with Video */}
+      <section className="relative overflow-hidden min-h-screen flex items-center">
+        {/* Background Video */}
+        <div className="absolute inset-0 z-0">
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            className="w-full h-full object-cover opacity-30"
+          >
+            <source src="/Animated_commercial_in_202505301558.mp4" type="video/mp4" />
+            Votre navigateur ne supporte pas les vidéos HTML5.
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-purple-900/60 to-orange-900/70"></div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center text-white">
+            <h1 className="text-6xl md:text-8xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-orange-400 via-blue-400 to-green-400 bg-clip-text text-transparent animate-pulse">
+                Team Office
+              </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Empowering teams to collaborate, innovate, and succeed in the modern workplace
+            <h2 className="text-2xl md:text-4xl font-semibold mb-4 text-orange-200">
+              📚 Votre Librairie de Fournitures Scolaires 📚
+            </h2>
+            <p className="text-xl md:text-2xl mb-8 max-w-4xl mx-auto leading-relaxed">
+              Découvrez notre collection complète de fournitures scolaires, livres, et matériel éducatif pour tous les niveaux. 
+              Qualité, prix attractifs et service client exceptionnel !
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link 
-                href="/dashboard"
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300"
+                href="/products"
+                className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-10 py-5 rounded-full font-bold text-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 animate-bounce"
               >
-                Get Started
+                🛒 Voir Nos Produits
               </Link>
               <Link 
                 href="/about"
-                className="border-2 border-purple-500 text-purple-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-purple-500 hover:text-white transition-all duration-300"
+                className="border-3 border-blue-400 bg-blue-400/20 backdrop-blur-sm text-white px-10 py-5 rounded-full font-bold text-xl hover:bg-blue-500 hover:border-blue-500 transition-all duration-300"
               >
-                Learn More
+                📖 En Savoir Plus
               </Link>
             </div>
           </div>
         </div>
         
-        {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-blue-400 rounded-full opacity-20 animate-bounce"></div>
-        <div className="absolute top-40 right-20 w-16 h-16 bg-purple-400 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-pink-400 rounded-full opacity-20 animate-ping"></div>
+        {/* Floating School Elements */}
+        <div className="absolute top-20 left-10 text-6xl animate-bounce">📚</div>
+        <div className="absolute top-40 right-20 text-5xl animate-pulse">✏️</div>
+        <div className="absolute bottom-20 left-1/4 text-4xl animate-ping">🎒</div>
+        <div className="absolute bottom-40 right-1/3 text-5xl animate-bounce">📐</div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-white/50 backdrop-blur-sm">
+      {/* Categories Section */}
+      <section className="py-20 bg-white/90 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">
-            Why Choose Team Office?
+          <h2 className="text-5xl font-bold text-center text-gray-800 mb-4">
+            🎯 Nos Catégories Principales
           </h2>
+          <p className="text-xl text-center text-gray-600 mb-16">
+            Tout ce dont vous avez besoin pour une rentrée scolaire réussie !
+          </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="group bg-gradient-to-br from-blue-100 to-blue-200 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
+            {/* Catégorie 1 */}
+            <div className="group bg-gradient-to-br from-orange-100 to-orange-200 p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 border-2 border-orange-300">
+              <div className="text-6xl mb-6 text-center group-hover:scale-110 transition-transform duration-300">
+                📚
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Team Collaboration</h3>
-              <p className="text-gray-600">Seamlessly work together with your team members in real-time collaboration tools.</p>
+              <h3 className="text-2xl font-bold text-orange-800 mb-4 text-center">Livres Scolaires</h3>
+              <p className="text-orange-700 text-center">Manuels scolaires pour tous les niveaux, de la maternelle au lycée. Éditions récentes et programmes officiels.</p>
+              <div className="mt-6 text-center">
+                <Link href="/products?category=books" className="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition-colors">
+                  Voir les livres
+                </Link>
+              </div>
             </div>
 
-            {/* Feature 2 */}
-            <div className="group bg-gradient-to-br from-purple-100 to-purple-200 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
+            {/* Catégorie 2 */}
+            <div className="group bg-gradient-to-br from-blue-100 to-blue-200 p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 border-2 border-blue-300">
+              <div className="text-6xl mb-6 text-center group-hover:scale-110 transition-transform duration-300">
+                ✏️
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Analytics & Insights</h3>
-              <p className="text-gray-600">Get detailed insights and analytics to track your team&apos;s productivity and performance.</p>
+              <h3 className="text-2xl font-bold text-blue-800 mb-4 text-center">Fournitures</h3>
+              <p className="text-blue-700 text-center">Stylos, crayons, cahiers, classeurs... Tout le matériel nécessaire pour écrire et organiser vos cours.</p>
+              <div className="mt-6 text-center">
+                <Link href="/products?category=supplies" className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors">
+                  Voir les fournitures
+                </Link>
+              </div>
             </div>
 
-            {/* Feature 3 */}
-            <div className="group bg-gradient-to-br from-pink-100 to-pink-200 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                </svg>
+            {/* Catégorie 3 */}
+            <div className="group bg-gradient-to-br from-green-100 to-green-200 p-8 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 border-2 border-green-300">
+              <div className="text-6xl mb-6 text-center group-hover:scale-110 transition-transform duration-300">
+                🎒
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Secure & Reliable</h3>
-              <p className="text-gray-600">Enterprise-grade security with 99.9% uptime guarantee for your peace of mind.</p>
+              <h3 className="text-2xl font-bold text-green-800 mb-4 text-center">Sacs & Accessoires</h3>
+              <p className="text-green-700 text-center">Cartables, sacs à dos, trousses et accessoires scolaires de qualité pour transporter vos affaires.</p>
+              <div className="mt-6 text-center">
+                <Link href="/products?category=bags" className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors">
+                  Voir les sacs
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
+      <section className="py-20 bg-gradient-to-r from-orange-600 via-blue-600 to-green-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-bold text-center text-white mb-12">
+            🏆 Team Office en Chiffres
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div className="text-white">
-              <div className="text-4xl md:text-5xl font-bold mb-2">10K+</div>
-              <div className="text-xl opacity-90">Active Teams</div>
+              <div className="text-4xl md:text-5xl font-bold mb-2">5000+</div>
+              <div className="text-xl opacity-90">📚 Livres disponibles</div>
             </div>
             <div className="text-white">
-              <div className="text-4xl md:text-5xl font-bold mb-2">50M+</div>
-              <div className="text-xl opacity-90">Tasks Completed</div>
+              <div className="text-4xl md:text-5xl font-bold mb-2">15K+</div>
+              <div className="text-xl opacity-90">✏️ Étudiants satisfaits</div>
             </div>
             <div className="text-white">
-              <div className="text-4xl md:text-5xl font-bold mb-2">99.9%</div>
-              <div className="text-xl opacity-90">Uptime</div>
+              <div className="text-4xl md:text-5xl font-bold mb-2">98%</div>
+              <div className="text-xl opacity-90">⭐ Taux de satisfaction</div>
             </div>
             <div className="text-white">
-              <div className="text-4xl md:text-5xl font-bold mb-2">150+</div>
-              <div className="text-xl opacity-90">Countries</div>
+              <div className="text-4xl md:text-5xl font-bold mb-2">200+</div>
+              <div className="text-xl opacity-90">🎒 Références produits</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-            Ready to Transform Your Team?
+      <section className="py-20 bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 relative overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute top-10 left-10 text-4xl animate-spin opacity-20">📚</div>
+        <div className="absolute top-20 right-20 text-3xl animate-bounce opacity-20">✏️</div>
+        <div className="absolute bottom-10 left-1/4 text-5xl animate-pulse opacity-20">🎒</div>
+        <div className="absolute bottom-20 right-1/3 text-4xl animate-ping opacity-20">📐</div>
+        
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-orange-600 via-blue-600 to-green-600 bg-clip-text text-transparent">
+              Prêt pour la Rentrée ? 🎓
+            </span>
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Join thousands of teams already using Team Office to achieve their goals.
+          <p className="text-xl text-gray-700 mb-8 leading-relaxed">
+            Rejoignez des milliers d&apos;étudiants qui font confiance à Team Office pour leurs fournitures scolaires. 
+            Qualité garantie, livraison rapide et prix imbattables !
           </p>
-          <Link 
-            href="/sign-up"
-            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-12 py-4 rounded-full font-semibold text-xl hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 inline-block"
-          >
-            Start Free Trial
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Link 
+              href="/products"
+              className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-12 py-4 rounded-full font-semibold text-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 inline-block"
+            >
+              🛒 Commander Maintenant
+            </Link>
+            <Link 
+              href="/contact"
+              className="border-2 border-blue-500 bg-blue-500/10 text-blue-600 px-12 py-4 rounded-full font-semibold text-xl hover:bg-blue-500 hover:text-white transition-all duration-300 inline-block"
+            >
+              📞 Nous Contacter
+            </Link>
+          </div>
         </div>
       </section>
     </div>
