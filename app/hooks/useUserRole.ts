@@ -11,15 +11,15 @@ export function useUserRole() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!isLoaded) return
+    if (!user) {
+      setRole(null) // ou 'CLIENT' si tu veux afficher Contact pour tous les non-admins
+      setLoading(false)
+      return
+    }
     async function fetchUserRole() {
-      if (!isLoaded || !user) {
-        setLoading(false)
-        return
-      }
-
       try {
-        // Récupérer le rôle de l'utilisateur depuis notre API
-        const response = await fetch('/api/user/role')
+        const response = await fetch('/api/user/role', { cache: 'no-store' })
         if (response.ok) {
           const data = await response.json()
           setRole(data.role)
@@ -30,7 +30,6 @@ export function useUserRole() {
         setLoading(false)
       }
     }
-
     fetchUserRole()
   }, [user, isLoaded])
 

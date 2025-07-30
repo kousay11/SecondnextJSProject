@@ -19,6 +19,22 @@ enum UserRole {
   CLIENT
 }
 
+enum MessageStatus {
+  PENDING
+  PROCESSED
+  CLOSED
+}
+
+enum MessageSubject {
+  GENERAL_INQUIRY
+  TECHNICAL_SUPPORT
+  BILLING_QUESTION
+  PRODUCT_QUESTION
+  COMPLAINT
+  SUGGESTION
+  OTHER
+}
+
 model User {
   id           Int      @id @default(autoincrement())
   clerkUserId  String?  @unique
@@ -28,13 +44,35 @@ model User {
   followers    Int      @default(0)
   isActive     Boolean  @default(true)
   registeredAt DateTime @default(now())
+
+  // Relations
+  messages Message[]
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  price       Float
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt
+  id           Int       @id @default(autoincrement())
+  name         String
+  description  String?
+  price        Float
+  imageProduct String? // URL ou chemin de l'image du produit
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
+}
+
+model Message {
+  id          Int            @id @default(autoincrement())
+  userId      Int
+  phone       String
+  subject     MessageSubject
+  message     String         @db.Text
+  status      MessageStatus  @default(PENDING)
+  createdAt   DateTime       @default(now())
+  processedAt DateTime?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }

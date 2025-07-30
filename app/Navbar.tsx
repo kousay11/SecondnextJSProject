@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { UserButton, SignedIn, SignedOut } from '@clerk/nextjs';
 import AdminPromotionModal from './components/AdminPromotionModal';
 import { useUserRole } from './hooks/useUserRole';
+import { useUnreadMessages } from './hooks/useUnreadMessages';
 
 // Composant AuthDropdown
 const AuthDropdown = ({ onShowAdminModal }: { onShowAdminModal: () => void }) => {
@@ -82,6 +83,7 @@ const AuthDropdown = ({ onShowAdminModal }: { onShowAdminModal: () => void }) =>
 const Navbar = () => {
   const [showAdminModal, setShowAdminModal] = useState(false);
   const { role } = useUserRole();
+  const { unreadCount } = useUnreadMessages();
 
   return (
     <>
@@ -110,17 +112,22 @@ const Navbar = () => {
               <Link href="/about" className='nav-link'>
                 ℹ️ À Propos
               </Link>
-              <Link href="/contact" className='nav-link'>
-                📞 Contact
-              </Link>
+              
+              {/* Contact visible pour tous sauf les admins */}
+              {role !== 'ADMIN' && (
+                <Link href="/contact" className='nav-link'>
+                  📞 Contact
+                </Link>
+              )}
+              
               <SignedIn>
                 <Link href="/dashboard" className='nav-link'>
                   📊 Dashboard
                 </Link>
                 {/* Afficher "Utilisateurs" seulement pour les ADMIN */}
                 {role === 'ADMIN' && (
-                  <Link href="/admin/roles" className='nav-link'>
-                    � Utilisateurs
+                  <Link href="/admin-check" className='nav-link'>
+                    🔍 Admin Check
                   </Link>
                 )}
               </SignedIn>
@@ -133,6 +140,21 @@ const Navbar = () => {
               </SignedOut>
               
               <SignedIn>
+                {/* Icône de messages pour les admins */}
+                {role === 'ADMIN' && (
+                  <Link 
+                    href="/admin/messages" 
+                    className="relative p-2 text-white hover:bg-white/20 rounded-full transition-all duration-300 transform hover:scale-110"
+                  >
+                    <span className="text-xl">📧</span>
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                      </span>
+                    )}
+                  </Link>
+                )}
+                
                 <UserButton 
                   afterSignOutUrl="/"
                   appearance={{

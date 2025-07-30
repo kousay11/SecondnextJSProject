@@ -1,12 +1,29 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { currentUser } from '@clerk/nextjs/server';
+import { prisma } from '@/prisma/client';
+import ContactForm from './components/ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact - Team Office',
   description: 'Contactez Team Office pour toutes vos questions concernant nos fournitures scolaires et services.',
 };
 
-const ContactPage = () => {
+const ContactPage = async () => {
+  // Vérifier si l'utilisateur est connecté (optionnel)
+  const clerkUser = await currentUser();
+  
+  let dbUser = null;
+  if (clerkUser) {
+    dbUser = await prisma.user.findUnique({
+      where: { clerkUserId: clerkUser.id },
+      select: { 
+        id: true,
+        name: true, 
+        email: true 
+      }
+    });
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Hero Section */}
@@ -94,103 +111,14 @@ const ContactPage = () => {
                 Envoyez-nous un message
               </h2>
               
-              <form className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Prénom *
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                      placeholder="Votre prénom"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Nom *
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                      placeholder="Votre nom"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                    placeholder="votre.email@exemple.com"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                    Téléphone
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                    placeholder="Votre numéro de téléphone"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                    Sujet *
-                  </label>
-                  <select
-                    id="subject"
-                    name="subject"
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                  >
-                    <option value="">Sélectionnez un sujet</option>
-                    <option value="product-info">Information produit</option>
-                    <option value="order-status">Statut de commande</option>
-                    <option value="technical-support">Support technique</option>
-                    <option value="partnership">Partenariat</option>
-                    <option value="other">Autre</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    Message *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={6}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-vertical"
-                    placeholder="Décrivez votre demande en détail..."
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full btn-primary py-4 text-lg font-semibold"
-                >
-                  Envoyer le message
-                </button>
-              </form>
+              <ContactForm 
+                user={clerkUser ? {
+                  firstName: clerkUser.firstName,
+                  lastName: clerkUser.lastName,
+                  emailAddresses: clerkUser.emailAddresses.map(e => ({ emailAddress: e.emailAddress }))
+                } : null} 
+                dbUser={dbUser} 
+              />
             </div>
           </div>
         </div>

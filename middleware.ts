@@ -5,11 +5,13 @@ import { NextRequest } from 'next/server';
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
   '/admin/roles(.*)',
+  '/products/add(.*)',
   '/api/users(.*)',
   '/api/products(.*)',
   '/api/admin/roles(.*)',
   '/api/sync-user(.*)',
-  '/api/user/role(.*)'
+  '/api/user/role(.*)',
+  '/api/upload/image(.*)'
 ]);
 
 // Définir les routes publiques dans admin (pas de protection)
