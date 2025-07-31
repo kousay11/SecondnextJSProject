@@ -9,9 +9,13 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '',
+        pathname: '/uploads/**',
+      },
     ],
-    // Autoriser les images locales depuis /uploads
-    domains: ['localhost'],
   },
 };
 

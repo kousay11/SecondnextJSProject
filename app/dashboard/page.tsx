@@ -2,6 +2,7 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { prisma } from '@/prisma/client';
+import DashboardClient from "./DashboardClient";
 
 export default async function DashboardPage() {
   // Obtenir les informations d'authentification
@@ -20,6 +21,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="container mx-auto p-6">
+      <DashboardClient />
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
       
       <div className="bg-white shadow-md rounded-lg p-6">

@@ -47,6 +47,10 @@ export default function MessagesManager() {
   const [error, setError] = useState('')
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'PROCESSED' | 'CLOSED'>('ALL')
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null)
+  const [replyContent, setReplyContent] = useState('')
+  const [replyingId, setReplyingId] = useState<number | null>(null)
+  const [replyError, setReplyError] = useState('')
+  const [replySuccess, setReplySuccess] = useState('')
   const { refreshCount } = useUnreadMessages()
 
   useEffect(() => {
@@ -101,6 +105,32 @@ export default function MessagesManager() {
     } catch (error) {
       setError('Erreur de connexion')
       console.error('Erreur:', error)
+    }
+  }
+
+  const handleReply = async (message: Message) => {
+    setReplyError('')
+    setReplySuccess('')
+    if (!replyContent.trim()) {
+      setReplyError('La réponse ne peut pas être vide.')
+      return
+    }
+    try {
+      const response = await fetch(`/api/messages/${message.id}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reply: replyContent })
+      })
+      if (response.ok) {
+        setReplySuccess('Réponse envoyée avec succès !')
+        setReplyContent('')
+        setReplyingId(null)
+      } else {
+        const errorData = await response.json()
+        setReplyError(errorData.error || 'Erreur lors de l\'envoi de la réponse.')
+      }
+    } catch {
+      setReplyError('Erreur de connexion.')
     }
   }
 
@@ -253,6 +283,46 @@ export default function MessagesManager() {
                   <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
                     <h5 className="font-semibold text-gray-800 mb-2">Message complet :</h5>
                     <p className="text-gray-700 whitespace-pre-wrap">{message.message}</p>
+                    {/* Zone de réponse admin */}
+                    <div className="mt-4">
+                      {replyingId === message.id ? (
+                        <div className="space-y-2">
+                          <textarea
+                            className="w-full border rounded-md p-2"
+                            rows={4}
+                            value={replyContent}
+                            onChange={e => setReplyContent(e.target.value)}
+                            placeholder="Votre réponse à l'utilisateur..."
+                          />
+                          {replyError && <div className="text-red-600 text-sm">{replyError}</div>}
+                          {replySuccess && <div className="text-green-600 text-sm">{replySuccess}</div>}
+                          <div className="flex gap-2">
+                            <button
+                              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                              onClick={() => handleReply(message)}
+                              type="button"
+                            >
+                              Envoyer
+                            </button>
+                            <button
+                              className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                              onClick={() => { setReplyingId(null); setReplyContent(''); setReplyError(''); setReplySuccess(''); }}
+                              type="button"
+                            >
+                              Annuler
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                          onClick={() => { setReplyingId(message.id); setReplyContent(''); setReplyError(''); setReplySuccess(''); }}
+                          type="button"
+                        >
+                          Répondre
+                        </button>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
