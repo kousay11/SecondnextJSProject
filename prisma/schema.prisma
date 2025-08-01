@@ -68,7 +68,7 @@ model Message {
   status      MessageStatus  @default(PENDING)
   createdAt   DateTime       @default(now())
   processedAt DateTime?
-  notified   Boolean        @default(false)
+  notified    Boolean        @default(false)
 
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
