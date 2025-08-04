@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useUnreadMessages } from '@/app/hooks/useUnreadMessages'
 
 interface User {
@@ -52,6 +53,7 @@ export default function MessagesManager() {
   const [replyError, setReplyError] = useState('')
   const [replySuccess, setReplySuccess] = useState('')
   const { refreshCount } = useUnreadMessages()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -77,6 +79,51 @@ export default function MessagesManager() {
 
     fetchMessages()
   }, []) // Pas de dépendance pour éviter les boucles infinies
+
+  // Gérer les paramètres URL pour pré-remplir les suggestions
+  useEffect(() => {
+    const messageId = searchParams?.get('messageId')
+    const action = searchParams?.get('action')
+    
+    console.log('MessagesManager - URL params check:', { messageId, action, messagesLength: messages.length }); // Debug
+    
+    if (messageId && action === 'reply' && messages.length > 0) {
+      const id = parseInt(messageId)
+      const targetMessage = messages.find(m => m.id === id)
+      const suggestion = localStorage.getItem(`suggestion_${id}`)
+      
+      console.log('MessagesManager - Target message found:', { targetMessage: !!targetMessage, suggestion: !!suggestion }); // Debug
+      
+      if (targetMessage && suggestion) {
+        console.log('MessagesManager - Applying suggestion automatically'); // Debug
+        // Ouvrir automatiquement le message en mode réponse
+        setSelectedMessage(targetMessage)
+        setReplyingId(id)
+        setReplyContent(suggestion)
+        setReplyError('')
+        setReplySuccess('')
+        
+        // Nettoyer le localStorage après utilisation
+        localStorage.removeItem(`suggestion_${id}`)
+        
+        // Scroll vers le message (optionnel)
+        setTimeout(() => {
+          const messageElement = document.getElementById(`message-${id}`)
+          if (messageElement) {
+            console.log('MessagesManager - Scrolling to message element'); // Debug
+            messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
+        }, 100)
+      } else if (targetMessage && !suggestion) {
+        // Juste ouvrir le message même sans suggestion
+        console.log('MessagesManager - Opening message without suggestion'); // Debug
+        setSelectedMessage(targetMessage)
+        setReplyingId(id)
+        setReplyError('')
+        setReplySuccess('')
+      }
+    }
+  }, [messages, searchParams])
 
   const updateMessageStatus = async (messageId: number, newStatus: string) => {
     try {
@@ -111,6 +158,13 @@ export default function MessagesManager() {
   const handleReply = async (message: Message) => {
     setReplyError('')
     setReplySuccess('')
+    
+    // Vérifier si le message est fermé
+    if (message.status === 'CLOSED') {
+      setReplyError('Impossible de répondre à un message fermé.')
+      return
+    }
+    
     if (!replyContent.trim()) {
       setReplyError('La réponse ne peut pas être vide.')
       return
@@ -161,6 +215,12 @@ export default function MessagesManager() {
 
   return (
     <div className="space-y-6">
+      {/* Titre de la section */}
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">💬 Gestion des Messages</h1>
+        <p className="text-gray-600">Gérez les messages clients, répondez et suivez leur statut</p>
+      </div>
+
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
           {error}
@@ -228,7 +288,7 @@ export default function MessagesManager() {
         ) : (
           <div className="divide-y divide-gray-200">
             {filteredMessages.map((message) => (
-              <div key={message.id} className="p-6 hover:bg-gray-50 transition-colors">
+              <div key={message.id} id={`message-${message.id}`} className="p-6 hover:bg-gray-50 transition-colors">{/* Ajout de l'ID pour le scroll */}
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
@@ -287,6 +347,17 @@ export default function MessagesManager() {
                     <div className="mt-4">
                       {replyingId === message.id ? (
                         <div className="space-y-2">
+                          {/* Indicateur si suggestion IA appliquée */}
+                          {searchParams?.get('messageId') === message.id.toString() && searchParams?.get('action') === 'reply' && (
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+                              <div className="flex items-center">
+                                <span className="text-blue-500 mr-2">🤖</span>
+                                <span className="text-blue-700 text-sm font-medium">
+                                  Suggestion IA appliquée - Vous pouvez modifier le texte avant dapos;envoyer
+                                </span>
+                              </div>
+                            </div>
+                          )}
                           <textarea
                             className="w-full border rounded-md p-2"
                             rows={4}
@@ -314,13 +385,27 @@ export default function MessagesManager() {
                           </div>
                         </div>
                       ) : (
-                        <button
-                          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                          onClick={() => { setReplyingId(message.id); setReplyContent(''); setReplyError(''); setReplySuccess(''); }}
-                          type="button"
-                        >
-                          Répondre
-                        </button>
+                        // Ne pas afficher le bouton Répondre si le message est fermé
+                        message.status !== 'CLOSED' ? (
+                          <button
+                            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                            onClick={() => { 
+                              if (message.status !== 'CLOSED') {
+                                setReplyingId(message.id); 
+                                setReplyContent(''); 
+                                setReplyError(''); 
+                                setReplySuccess(''); 
+                              }
+                            }}
+                            type="button"
+                          >
+                            Répondre
+                          </button>
+                        ) : (
+                          <div className="mt-4 bg-gray-100 text-gray-500 px-4 py-2 rounded border">
+                            ❌ Message fermé - Réponse non autorisée
+                          </div>
+                        )
                       )}
                     </div>
                   </div>

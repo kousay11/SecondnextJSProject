@@ -18,6 +18,11 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json({ error: 'Message ou utilisateur introuvable.' }, { status: 404 });
     }
 
+    // Vérifier que le message n'est pas fermé
+    if (message.status === 'CLOSED') {
+      return NextResponse.json({ error: 'Impossible de répondre à un message fermé.' }, { status: 403 });
+    }
+
     // Configurer le transporteur SMTP
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
